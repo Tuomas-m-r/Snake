@@ -1,5 +1,4 @@
 #include "GameManager.h"
-#include "Snake.h"
 #include <stdlib.h>
 #include <SDL.h>
 #include <iostream>
@@ -32,9 +31,20 @@ void GameManager::init() {
 		createRenderer();
 		isRunning = true;
 	}
-	snakeHead = { 400, 300, 20, 20 };
+	snakeHead.w = 20;
+	snakeHead.h = 20;
+	snakeHead.y = SCREEN_HEIGTH / 2;
+	snakeHead.x = SCREEN_WIDTH / 2;
+	pos[0].x = snakeHead.x;
+	pos[0].y = snakeHead.y;
+
+	for (int i = 0; i < pos.size(); i++) {
+		pos[i].w = 20;
+		pos[i].h = 20;
+	}
 	foodRect.w = 20;
 	foodRect.h = 20;
+	currentDirection = DIRECTION_LEFT;
 }
 
 void GameManager::createWindow() {
@@ -105,21 +115,22 @@ void GameManager::handleEvents() {
 }
 
 void GameManager::update() {
-	
-	moveSnake();
 	if (snakeHead.x == foodRect.x && snakeHead.y == foodRect.y) {
 		foodRect.x = 20 * (rand() % X_MAX + 1);
 		foodRect.y = 20 * (rand() % Y_MAX + 1);
-		
+		snakeSize++;
 	}
+	moveSnake();
 }
 
 void GameManager::renderSnake() {
-	for (SDL_Rect &rect : snakePast) {
+	for (int i = 0; i < snakeSize; i++){
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 		SDL_RenderClear(renderer);
 		SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-		SDL_RenderFillRect(renderer, &snakeHead);
+		for (int j = 0; j < snakeSize; j++) {
+			SDL_RenderFillRect(renderer, &pos[j]);
+		}
 		SDL_RenderPresent(renderer);
 	}
 }
@@ -137,12 +148,14 @@ void GameManager::clean() {
 }
 
 void GameManager::moveSnake() {
+	yVelocity = 0;
+	xVelocity = 0;
 	if (currentDirection == DIRECTION_UP) {
 		if (snakeHead.y == 0) {
 			snakeHead.y = 0;
 		}
 		else {
-			snakeHead.y -= yVelocity;
+			yVelocity = negativeSpeed;
 		}
 	}
 	else if (currentDirection == DIRECTION_DOWN) {
@@ -150,7 +163,7 @@ void GameManager::moveSnake() {
 			snakeHead.y = SCREEN_HEIGTH - snakeHead.h;
 		}
 		else {
-			snakeHead.y += yVelocity;
+			yVelocity = speed;
 		}
 	}
 	else if (currentDirection == DIRECTION_LEFT) {
@@ -158,7 +171,7 @@ void GameManager::moveSnake() {
 			snakeHead.x = 0;
 		}
 		else {
-			snakeHead.x -= xVelocity;
+			xVelocity = negativeSpeed;
 		}
 	}
 	else if (currentDirection == DIRECTION_RIGHT) {
@@ -166,7 +179,17 @@ void GameManager::moveSnake() {
 			snakeHead.x = SCREEN_WIDTH - snakeHead.w;
 		}
 		else {
-			snakeHead.x += xVelocity;
+			xVelocity = speed;
 		}
 	}
+
+	if (snakeSize > 1) {
+		for (int i = snakeSize - 1; i > 0; --i) {
+			pos[i] = pos[i - 1];
+		}
+	}
+	pos[0].x = snakeHead.x;
+	pos[0].y = snakeHead.y;
+	snakeHead.x += xVelocity;
+	snakeHead.y += yVelocity;
 }

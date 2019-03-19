@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL.h>
-#include <vector>
+#include <array>
 
 class GameManager {
 public:
@@ -21,8 +21,11 @@ private:
 	const int X_MAX = 40;
 	const int Y_MAX = 30;
 	int currentDirection;
-	const int xVelocity = 20;
-	const int yVelocity = 20;
+	int snakeSize = 1;
+	const int negativeSpeed = -20;
+	const int speed = 20;
+	int xVelocity = 0;
+	int yVelocity = 0;
 	bool isRunning = false;
 	const int SCREEN_WIDTH = 800;
 	const int SCREEN_HEIGTH = 600;
@@ -31,5 +34,5 @@ private:
 	SDL_Renderer *renderer = nullptr;
 	SDL_Rect snakeHead;
 	SDL_Rect foodRect;
-	std::vector<SDL_Rect> snakePast;
+	std::array<SDL_Rect, 100> pos;
 };
