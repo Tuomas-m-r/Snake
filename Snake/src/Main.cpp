@@ -17,9 +17,10 @@ int main(int argc, char *argv[]) {
 		frameStart = SDL_GetTicks();
 
 		gameManager->update();
+		gameManager->checkCollision();
 		gameManager->renderSnake();
-		gameManager->handleEvents();
 		gameManager->renderFood();
+		gameManager->handleEvents();
 		
 		frameTime = SDL_GetTicks() - frameStart;
 		if (frameDelay > frameTime) {

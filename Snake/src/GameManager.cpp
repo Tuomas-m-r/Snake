@@ -38,13 +38,12 @@ void GameManager::init() {
 	pos[0].x = snakeHead.x;
 	pos[0].y = snakeHead.y;
 
-	for (int i = 0; i < pos.size(); i++) {
+	for (unsigned int i = 0; i < pos.size(); i++) {
 		pos[i].w = 20;
 		pos[i].h = 20;
 	}
 	foodRect.w = 20;
 	foodRect.h = 20;
-	currentDirection = DIRECTION_LEFT;
 }
 
 void GameManager::createWindow() {
@@ -124,15 +123,14 @@ void GameManager::update() {
 }
 
 void GameManager::renderSnake() {
-	for (int i = 0; i < snakeSize; i++){
-		SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-		SDL_RenderClear(renderer);
-		SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
-		for (int j = 0; j < snakeSize; j++) {
-			SDL_RenderFillRect(renderer, &pos[j]);
-		}
-		SDL_RenderPresent(renderer);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(renderer);
+	SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
+
+	for (int j = 0; j < snakeSize; j++) {
+		SDL_RenderFillRect(renderer, &pos[j]);
 	}
+	SDL_RenderPresent(renderer);
 }
 
 void GameManager::renderFood() {
@@ -151,36 +149,16 @@ void GameManager::moveSnake() {
 	yVelocity = 0;
 	xVelocity = 0;
 	if (currentDirection == DIRECTION_UP) {
-		if (snakeHead.y == 0) {
-			snakeHead.y = 0;
-		}
-		else {
-			yVelocity = negativeSpeed;
-		}
+		yVelocity = negativeSpeed;
 	}
 	else if (currentDirection == DIRECTION_DOWN) {
-		if (snakeHead.y == (SCREEN_HEIGTH - snakeHead.h)) {
-			snakeHead.y = SCREEN_HEIGTH - snakeHead.h;
-		}
-		else {
-			yVelocity = speed;
-		}
+		yVelocity = speed;
 	}
 	else if (currentDirection == DIRECTION_LEFT) {
-		if (snakeHead.x == 0) {
-			snakeHead.x = 0;
-		}
-		else {
-			xVelocity = negativeSpeed;
-		}
+		xVelocity = negativeSpeed;
 	}
 	else if (currentDirection == DIRECTION_RIGHT) {
-		if (snakeHead.x == (SCREEN_WIDTH - snakeHead.w)) {
-			snakeHead.x = SCREEN_WIDTH - snakeHead.w;
-		}
-		else {
-			xVelocity = speed;
-		}
+		xVelocity = speed;
 	}
 
 	if (snakeSize > 1) {
@@ -192,4 +170,19 @@ void GameManager::moveSnake() {
 	pos[0].y = snakeHead.y;
 	snakeHead.x += xVelocity;
 	snakeHead.y += yVelocity;
+}
+
+void GameManager::checkCollision() {
+	if (snakeHead.y < 0) {
+		snakeHead.y = SCREEN_HEIGTH - snakeHead.h;
+	}
+	if (snakeHead.y > (SCREEN_HEIGTH - snakeHead.h)) {
+		snakeHead.y = 0;
+	}
+	if (snakeHead.x < 0) {
+		snakeHead.x = SCREEN_WIDTH - snakeHead.w;
+	}
+	if (snakeHead.x > (SCREEN_WIDTH - snakeHead.w)) {
+		snakeHead.x = 0;
+	}
 }

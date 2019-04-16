@@ -15,6 +15,7 @@ public:
 	void update();
 	void clean();
 	void moveSnake();
+	void checkCollision();
 	bool running() { return isRunning; }
 	
 private:
