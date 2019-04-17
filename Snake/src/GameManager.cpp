@@ -185,4 +185,10 @@ void GameManager::checkCollision() {
 	if (snakeHead.x > (SCREEN_WIDTH - snakeHead.w)) {
 		snakeHead.x = 0;
 	}
+
+	for (unsigned int i = snakeSize - 1; i > 0; i--) {
+		if (snakeHead.x == pos[i].x && snakeHead.y == pos[i].y) {
+			isRunning = false;
+		}
+	}
 }
